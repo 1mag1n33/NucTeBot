@@ -1,0 +1,9 @@
+[discord]
+bot_token = ""
+client_id = ""
+guild_id = ""
+channels = [ "", ]
+
+[mongodb]
+uri = "mongodb://localhost:27017"
+dbName = ""
