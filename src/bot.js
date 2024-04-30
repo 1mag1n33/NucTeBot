@@ -8,7 +8,7 @@ const CLIENT_ID = config.get("discord.client_id");
 const GUILD_ID = config.get("discord.guild_id");
 
 const { Client, Collection, GatewayIntentBits, REST, Routes } = require('discord.js');
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 
 // Collections
 

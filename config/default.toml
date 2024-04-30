@@ -3,7 +3,10 @@ bot_token = ""
 client_id = ""
 guild_id = ""
 channels = [ "", ]
+staff_roles = [""]
+bot_roles = ["", ""]
+
 
 [mongodb]
 uri = "mongodb://localhost:27017"
-dbName = ""
+dbName = "DiscordBot"

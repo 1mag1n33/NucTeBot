@@ -1,15 +1,19 @@
 const { Events, Collection } = require('discord.js');
 const config = require('config');
 
-
 module.exports = {
-	name: Events.InteractionCreate,
-	async execute(interaction) {
+    name: Events.InteractionCreate,
+    async execute(interaction) {
         const allowedChannels = config.get('discord.channels');
+        const staffRoles = config.get('discord.staff_roles');
         const client = interaction.client;
-		if (interaction.isCommand() && !allowedChannels.includes(interaction.channelId)) {
+        const memberRoles = interaction.member.roles.cache.map(role => role.id);
+        const isStaff = staffRoles.some(role => memberRoles.includes(role));
+
+        if (interaction.isCommand() && !allowedChannels.includes(interaction.channelId) && !isStaff) {
             return interaction.reply('You can only use this command in specific channels.');
         }
+
         const command = client.commands.get(interaction.commandName);
 
         if (!command) {
@@ -50,5 +54,5 @@ module.exports = {
                 await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
             }
         }
-	},
+    },
 };
