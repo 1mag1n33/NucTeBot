@@ -13,8 +13,6 @@ module.exports = {
             
     async execute(interaction) {
         const trigger = interaction.options.getString('trigger');
-
-        // Remove the custom response for the trigger from your database
         await Response.deleteOne({ trigger });
 
         await interaction.reply(`Custom response removed for trigger "${trigger}".`);

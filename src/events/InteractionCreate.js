@@ -14,7 +14,24 @@ module.exports = {
             return interaction.reply('You can only use this command in specific channels.');
         }
 
-        const command = client.commands.get(interaction.commandName);
+        let command = null;
+
+        if (interaction.isChatInputCommand()) {
+            command = client.commands.get(interaction.commandName);
+        } else if (interaction.isAutocomplete()) {
+            command = client.commands.get(interaction.commandName);
+    
+            if (!command) {
+                console.error(`No command matching ${interaction.commandName} was found.`);
+                return;
+            }
+    
+            try {
+                await command.autocomplete(interaction);
+            } catch (error) {
+                console.error(error);
+            }
+        }
 
         if (!command) {
             console.error(`No command matching ${interaction.commandName} was found.`);

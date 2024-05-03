@@ -26,13 +26,16 @@ for (const folder of commandFolders) {
       const filePath = path.join(commandsPath, file);
       const command = require(filePath);
       if ('data' in command && 'execute' in command) {
-		client.commands.set(command.data.name, command);
-        commands.push(command.data.toJSON());
+        const commandData = command.data.toJSON();
+        commandData.group = folder;
+        console.log(`Loaded command ${commandData.name} in group ${commandData.group}`);
+		client.commands.set(commandData.name, command);
+        commands.push(commandData);
       } else {
         console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
       }
     }
-  }
+}
 
 
 // End Load commands
