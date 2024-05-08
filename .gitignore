@@ -1,4 +1,4 @@
 commands.txt
 package-lock.json
 node_modules
-bot.toml
+toml/

@@ -2,9 +2,6 @@ const { SlashCommandBuilder } = require('discord.js');
 const User = require('../../models/User');
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('register')
-        .setDescription('Register to start using the economy system.'),
     async execute(interaction) {
         const { user } = interaction;
         try {

@@ -1,10 +1,6 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
 const User = require('../../models/User');
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('daily')
-        .setDescription('Claim your daily reward.'),
     async execute(interaction) {
         const userId = interaction.user.id;
         const user = await User.findOne({ userId });

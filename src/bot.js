@@ -8,7 +8,7 @@ const CLIENT_ID = config.get("discord.client_id");
 const GUILD_ID = config.get("discord.guild_id");
 
 const { Client, Collection, GatewayIntentBits, REST, Routes } = require('discord.js');
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildPresences] });
 
 // Collections
 
@@ -17,28 +17,50 @@ client.cooldowns = new Collection();
 
 // Start Load commands
 const commands = [];
-const foldersPath = path.join(__dirname, 'commands');
-const commandFolders = fs.readdirSync(foldersPath);
+const commandsPath = path.join(__dirname, 'commands');
+const commandFolders = fs.readdirSync(commandsPath);
 for (const folder of commandFolders) {
-    const commandsPath = path.join(foldersPath, folder);
-    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
-    for (const file of commandFiles) {
-      const filePath = path.join(commandsPath, file);
-      const command = require(filePath);
-      if ('data' in command && 'execute' in command) {
-        const commandData = command.data.toJSON();
-        commandData.group = folder;
-        console.log(`Loaded command ${commandData.name} in group ${commandData.group}`);
-		client.commands.set(commandData.name, command);
-        commands.push(commandData);
-      } else {
-        console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
-      }
+    const indexPath = path.join(commandsPath, folder, 'index.js');
+    const commandData = require(indexPath);
+
+    if (commandData.data) {
+        const cmdData = commandData.data;
+        client.commands.set(cmdData.name, cmdData);
+        commands.push({
+            name: cmdData.name,
+            description: cmdData.description,
+            options: cmdData.options || [],
+            category: folder
+        });
+
+        const commandFiles = fs.readdirSync(path.join(commandsPath, folder)).filter(file => file.endsWith('.js'));
+        for (const file of commandFiles) {
+            if (file === 'index.js') continue;
+
+            const filePath = path.join(commandsPath, folder, file);
+            const command = require(filePath);
+
+            if (typeof command.execute === 'function') {
+                client.commands.set(`${cmdData.name}:${path.parse(file).name}`, command.execute);
+            } else {
+                console.log(`[WARNING] The command at ${filePath} is missing the required "execute" function.`);
+            }
+        }
+    } else {
+        console.log(`[WARNING] The command at ${indexPath} is missing the required "data" object.`);
+        continue;
     }
 }
 
 
+
+
+
+
+
+
 // End Load commands
+
 
 // Start Events
 
