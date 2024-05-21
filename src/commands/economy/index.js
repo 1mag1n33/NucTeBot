@@ -8,7 +8,6 @@ module.exports = {
 		subcommand
 			.setName('balance')
 			.setDescription('Check your balance.'))
-			//.addUserOption(option => option.setName('target').setDescription('The user')))
 	.addSubcommand(subcommand =>
 		subcommand
             .setName('daily')
@@ -26,6 +25,4 @@ module.exports = {
             .setName('work')
             .setDescription('Work to earn money.'))
     .toJSON(),
-    async execute(interaction) {
-    },
     }

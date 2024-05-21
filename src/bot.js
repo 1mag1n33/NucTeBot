@@ -1,7 +1,6 @@
-const config = require('config')
+const config = require('config');
 const fs = require('node:fs');
 const path = require('node:path');
-
 
 const TOKEN = config.get("discord.bot_token");
 const CLIENT_ID = config.get("discord.client_id");
@@ -11,16 +10,17 @@ const { Client, Collection, GatewayIntentBits, REST, Routes } = require('discord
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildPresences] });
 
 // Collections
-
 client.commands = new Collection(); 
+client.subcommands = new Collection();
 client.cooldowns = new Collection();
 
-// Start Load commands
+// Load commands
 const commands = [];
 const commandsPath = path.join(__dirname, 'commands');
-const commandFolders = fs.readdirSync(commandsPath);
-for (const folder of commandFolders) {
-    const indexPath = path.join(commandsPath, folder, 'index.js');
+const folders = fs.readdirSync(commandsPath);
+
+for (const folder of folders) {
+    const indexPath = path.join(commandsPath, folder, 'index.js'); // Path to index.js
     const commandData = require(indexPath);
 
     if (commandData.data) {
@@ -29,7 +29,7 @@ for (const folder of commandFolders) {
         commands.push({
             name: cmdData.name,
             description: cmdData.description,
-            options: cmdData.options || [],
+            options: cmdData.options,
             category: folder
         });
 
@@ -41,57 +41,44 @@ for (const folder of commandFolders) {
             const command = require(filePath);
 
             if (typeof command.execute === 'function') {
-                client.commands.set(`${cmdData.name}:${path.parse(file).name}`, command.execute);
+                client.subcommands.set(`${cmdData.name}:${path.parse(file).name}`, command.execute);
             } else {
                 console.log(`[WARNING] The command at ${filePath} is missing the required "execute" function.`);
             }
         }
     } else {
         console.log(`[WARNING] The command at ${indexPath} is missing the required "data" object.`);
-        continue;
     }
 }
 
-
-
-
-
-
-
-
-// End Load commands
-
-
-// Start Events
-
+// Load events
 const eventsPath = path.join(__dirname, 'events');
 const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 
 for (const file of eventFiles) {
-	const filePath = path.join(eventsPath, file);
-	const event = require(filePath);
-	if (event.once) {
-		client.once(event.name, (...args) => event.execute(...args));
-	} else {
-		client.on(event.name, (...args) => event.execute(...args));
-	}
+    const filePath = path.join(eventsPath, file);
+    const event = require(filePath);
+    if (event.once) {
+        client.once(event.name, (...args) => event.execute(...args));
+    } else {
+        client.on(event.name, (...args) => event.execute(...args));
+    }
 }
-// End Events
 
-// Start Deploy commands
+// Deploy commands
 const rest = new REST().setToken(TOKEN);
 (async () => {
-	try {
-		console.log(`Started refreshing ${commands.length} application (/) commands.`);
-		const data = await rest.put(
-			Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
-			{ body: commands },
-		);
+    try {
+        console.log(`Started refreshing ${commands.length} application (/) commands.`);
+        const data = await rest.put(
+            Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
+            { body: commands },
+        );
 
-		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
-	} catch (error) {
-		console.error(error);
-	}
+        console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+    } catch (error) {
+        console.error(error);
+    }
 })();
-// End Deploy commands
+
 client.login(TOKEN);

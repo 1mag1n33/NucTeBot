@@ -66,19 +66,39 @@ module.exports = {
         timestamps.set(interaction.user.id, now);
         setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
 
-        if (typeof command.execute !== 'function') {
-            console.error(`Command ${commandName} does not have an execute function.`);
-            return;
-        }
+        const subcommand = interaction.options.getSubcommand(false);
+        if (subcommand) {
+            const subcommandHandler = client.subcommands.get(`${interaction.commandName}:${subcommand}`);
+            if (!subcommandHandler) {
+                console.error(`No subcommand matching ${interaction.commandName}:${subcommand} was found.`);
+                return;
+            }
 
-        try {
-            await command.execute(interaction);
-        } catch (error) {
-            console.error(error);
-            if (interaction.replied || interaction.deferred) {
-                await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
-            } else {
-                await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+            try {
+                await subcommandHandler(interaction);
+            } catch (error) {
+                console.error(error);
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp({ content: 'There was an error while executing this subcommand!', ephemeral: true });
+                } else {
+                    await interaction.reply({ content: 'There was an error while executing this subcommand!', ephemeral: true });
+                }
+            }
+        } else {
+            if (typeof command.execute !== 'function') {
+                console.error(`Command ${commandName} does not have an execute function.`);
+                return;
+            }
+
+            try {
+                await command.execute(interaction);
+            } catch (error) {
+                console.error(error);
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+                } else {
+                    await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+                }
             }
         }
     },
