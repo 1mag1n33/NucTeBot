@@ -1,16 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('pardon')
-        .setDescription('Select a member and unban them.')
-        .addUserOption(option =>
-            option
-                .setName('target')
-                .setDescription('The member to pardon')
-                .setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
-        .setDMPermission(false),
     async execute(interaction) {
         const user = interaction.options.getUser('target');
         const bot = interaction.guild.members.cache.get(interaction.client.user.id);

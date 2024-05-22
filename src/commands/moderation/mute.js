@@ -1,26 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits, Permissions } = require('discord.js');
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('mute')
-        .setDescription('Mute a user in the server')
-        .addUserOption(option =>
-            option
-                .setName('user')
-                .setDescription('The user to mute')
-                .setRequired(true)
-        )
-        .addStringOption(option =>
-            option
-                .setName('reason')
-                .setDescription('The reason for muting the user')
-        )
-        .addStringOption(option =>
-            option
-                .setName('duration')
-                .setDescription('The duration of the mute (e.g., 1d, 1h, 30m)')
-        ),
-
     async execute(interaction) {
         const user = interaction.options.getUser('user');
         if (!user) {

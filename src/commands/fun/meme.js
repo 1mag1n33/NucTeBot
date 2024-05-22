@@ -2,9 +2,6 @@ const axios = require('axios');
 const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('meme')
-        .setDescription('Get a random meme.'),
     async execute(interaction) {
         try {
             const response = await axios.get('https://www.reddit.com/r/memes/random.json');

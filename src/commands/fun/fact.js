@@ -2,9 +2,6 @@ const axios = require('axios');
 const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('fact')
-        .setDescription('Sends a random fun fact.'),
     async execute(interaction) {
         try {
             const response = await axios.get('https://api.chucknorris.io/jokes/random');

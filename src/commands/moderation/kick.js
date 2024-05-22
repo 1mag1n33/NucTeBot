@@ -1,21 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('kick')
-        .setDescription('Kick a user from the server')
-        .addUserOption(option =>
-			option
-				.setName('target')
-				.setDescription('The member to ban')
-				.setRequired(true))
-		.addStringOption(option =>
-			option
-				.setName('reason')
-				.setDescription('The reason for kicking'))
-		.setDefaultMemberPermissions(PermissionFlagsBits.KickMembers)
-		.setDMPermission(false),
-
     async execute(interaction) {
         const user = interaction.options.getUser('target');
         const reason = interaction.options.getString('reason') || 'No reason provided';

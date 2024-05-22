@@ -15,14 +15,6 @@ function textToBinary(text) {
 }
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('binary')
-        .setDescription('Converts text to binary and vice versa.')
-        .addStringOption(option =>
-            option.setName('input')
-                .setDescription('The text or binary input to convert.')
-                .setRequired(true)
-        ),
     async execute(interaction) {
         const input = interaction.options.getString('input');
         let output;

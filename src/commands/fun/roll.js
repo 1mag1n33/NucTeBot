@@ -1,17 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('roll')
-        .setDescription('Rolls a specified number of dice with a specified number of sides.')
-        .addIntegerOption(option =>
-            option.setName('num_dice')
-                .setDescription('The number of dice to roll.')
-                .setRequired(true))
-        .addIntegerOption(option =>
-            option.setName('num_sides')
-                .setDescription('The number of sides for each die.')
-                .setRequired(true)),
     async execute(interaction) {
         const numDice = interaction.options.getInteger('num_dice', true);
         const numSides = interaction.options.getInteger('num_sides', true);
